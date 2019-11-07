@@ -81,7 +81,7 @@
 											"top": 863,
 											"width": 132.93896484375,
 											"height": 13,
-											"text": "User Profle"
+											"text": "User Profile"
 										},
 										{
 											"_type": "LabelView",
@@ -5600,7 +5600,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFuQcyNJ+kaE4c="
 					},
-					"name": "User Profle",
+					"name": "User Profile",
 					"attributes": [
 						{
 							"_type": "UMLAttribute",
