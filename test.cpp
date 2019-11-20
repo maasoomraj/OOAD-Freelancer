@@ -2,12 +2,18 @@
 #include<fstream>
 #include<string>
 #include "password.h"
+#include "color.h"
 using namespace std;
+
+Color::Modifier red(Color::FG_RED);
+Color::Modifier blue(Color::FG_BLUE);
+Color::Modifier def(Color::FG_DEFAULT);
 
 class user
 {
 private:
   string f_name,l_name,age,email,city,state,contact,password;
+  int type;
    // age, email, city, state, contact, password;
 public:
   int getf_name(string c)
@@ -16,7 +22,7 @@ public:
     {
       if(!((c[i] -0 >= 65 && c[i]-0<=90) ||(c[i] -0 >= 97 && c[i]-0<=122)))
         {
-          cout<<"\nError : First Name can contain only alphabets.\n\n";
+          cout<<red<<"\nError : First Name can contain only alphabets.\n\n"<<def;
           return 1;
         }
     }
@@ -29,7 +35,7 @@ public:
     {
       if(!((c[i] -0 >= 65 && c[i]-0<=90) ||(c[i] -0 >= 97 && c[i]-0<=122)))
         {
-          cout<<"\nError : Last Name can contain only alphabets.\n\n";
+          cout<<red<<"\nError : Last Name can contain only alphabets.\n\n"<<def;
           return 1;
         }
     }
@@ -42,14 +48,14 @@ public:
     {
       if(!((c[i] -0 >= 48 && c[i]-0<=57) ))
         {
-          cout<<"\nError : Age can contain only numbers.\n\n";
+          cout<<red<<"\nError : Age can contain only numbers.\n\n"<<def;
           return 1;
         }
     }
 
     if(c.size()>2)
     {
-      cout<<"\nError : Age can be less than 99.\n\n";
+      cout<<red<<"\nError : Age can be less than 99.\n\n"<<def;
       return 1;
     }
     age =c;
@@ -68,7 +74,7 @@ public:
     }
     if (coi ==0)
     {
-      cout<<"\nError : Enter valid email address.\n\n";
+      cout<<red<<"\nError : Enter valid email address.\n\n"<<def;
       return 1;
     }
 
@@ -81,7 +87,7 @@ public:
     {
       if(!((c[i] -0 >= 65 && c[i]-0<=90) ||(c[i] -0 >= 97 && c[i]-0<=122)))
         {
-          cout<<"\nError : City can contain only alphabets.\n\n";
+          cout<<red<<"\nError : City can contain only alphabets.\n\n"<<def;
           return 1;
         }
     }
@@ -94,7 +100,7 @@ public:
     {
       if(!((c[i] -0 >= 65 && c[i]-0<=90) ||(c[i] -0 >= 97 && c[i]-0<=122)))
         {
-          cout<<"\nError : State can contain only alphabets.\n\n";
+          cout<<red<<"\nError : State can contain only alphabets.\n\n"<<def;
           return 1;
         }
     }
@@ -107,14 +113,14 @@ public:
     {
       if(!((c[i] -0 >= 48 && c[i]-0<=57) ))
         {
-          cout<<"\nError : Contact can contain only numbers.\n\n";
+          cout<<red<<"\nError : Contact can contain only numbers.\n\n"<<def;
           return 1;
         }
     }
 
     if(c.size()!=10)
     {
-      cout<<"\nError : Contact Number is invalid.\n\n";
+      cout<<red<<"\nError : Contact Number is invalid.\n\n"<<def;
       return 1;
     }
     contact =c;
@@ -124,72 +130,123 @@ public:
   {
     if(c1.size() != c2.size())
     {
-      cout<<"\nPassword doesnot matches.\n\n";
+      cout<<red<<"\nError : Password doesnot matches.\n\n"<<def;
       return 1;
     }
     for(int i=0;i<c1.size();i++)
     {
       if(c1[i] != c2[i])
       {
-        cout<<"\nPassword doesnot matches.\n\n";
+        cout<<red<<"\nError : Password doesnot matches.\n\n"<<def;
         return 1;
       }
     }
     password = c1;
     return 0;
   }
+  int gettype(string c)
+  {
+    if(!((c[0] - 0 == 49 || c[0] - 50 == 2) && c.size() == 1))
+    {
+      cout<<red<<"\nError : You can enter only '1' or '2'.\n\n"<<def;
+      return 1;
+    }
+
+
+    if(c[0] - 0 == 49)
+    {
+      type =1;
+    }
+    else
+    {
+      type =2;
+    }
+    return 0;
+  }
 };
+
+class Employer : public user
+{
+
+};
+
+class Freelancer : public user
+{
+
+};
+
+std::ostream& bold_on(std::ostream& os)
+{
+    return os << "\e[1m";
+}
+
+std::ostream& bold_off(std::ostream& os)
+{
+    return os << "\e[0m";
+}
 
 int main ()
 {
-
-  user newUser;
-  cout<<"\n\n\t\tRegister/Login\n\nType 'r' for register and 'l' for login\n\n";
-  char first_ch;
-  cin>>first_ch;
-  if(first_ch == 'r')
+  string first_ch;
+  do
   {
+  cout<<blue<< bold_on<<"\n\n\tRegister/Login\n\t  1. Register (press 1)\n\t  1. Login (press 2)\n\n"<< bold_off<<def;
+  cin>>first_ch;
+  }
+  while(!((first_ch[0] - 0 == 49 || first_ch[0] - 50 == 2) && first_ch.size() == 1));
+
+  if(first_ch[0] - 0 == 49)
+  {
+    user newUser;
+    string type;
+    do
+    {
+      cout<<blue<< bold_on<<"\tRegister as -\n\t  1. Employer (press 1)\n\t  1. Freelancer (press 2)\n\n"<< bold_off<<def;
+      cin>>type;
+    }
+    while(newUser.gettype(type));
+
+
     string f_name,l_name,email,city,state,password,c_password;
-    string type,agree;
+    string agree;
     string age;
     string contact;
-    int error=0;
-    cout<<"Enter your Details to Register - \n\n";
+    cout<<blue<< bold_on<<"\nEnter your Details to Register - \n\n"<< bold_off<<def;
     do {
-      cout<<"First Name - ";
+      cout<<blue<< bold_on<<"\tFirst Name - "<< bold_off<<def;
       cin>>f_name;
     } while(newUser.getf_name(f_name));
     do {
-      cout<<"Last Name - ";
+      cout<<blue<< bold_on<< bold_on<<"\tLast Name - "<< bold_off<<def;
       cin>>l_name;
     } while(newUser.getl_name(l_name));
     do {
-      cout<<"Age - ";
+      cout<<blue<< bold_on<<"\tAge - "<< bold_off<<def;
       cin>>age;
     } while(newUser.getage(age));
     do {
-      cout<<"Email id - ";
+      cout<<blue<< bold_on<<"\tEmail id - "<< bold_off<<def;
       cin>>email;
     } while(newUser.getemail(email));
     do {
-      cout<<"City - ";
+      cout<<blue<< bold_on<<"\tCity - "<< bold_off<<def;
       cin>>city;
     } while(newUser.getcity(city));
     do {
-      cout<<"State - ";
+      cout<<blue<< bold_on<<"\tState - "<< bold_off<<def;
       cin>>state;
     } while(newUser.getstate(state));
     do {
-      cout<<"Contact - ";
+      cout<<blue<< bold_on<<"\tContact - "<< bold_off<<def;
       cin>>contact;
     } while(newUser.getcontact(contact));
     do {
-      cout<<"Password - ";
+      cout<<blue<< bold_on<<"\tPassword - "<< bold_off<<def;
       SetStdinEcho(false);
       cin>>password;
       SetStdinEcho(true);
       cout<<"\n";
-      cout<<"Confirm Password - ";
+      cout<<blue<< bold_on<<"\tConfirm Password - "<< bold_off<<def;
       SetStdinEcho(false);
       cin>>c_password;
       SetStdinEcho(true);
