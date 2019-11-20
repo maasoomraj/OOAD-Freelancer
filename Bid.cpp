@@ -46,7 +46,7 @@ int main()
 		fwrite(&deadline_date,deadline_date.size()+1,1,f);
 		fputs("\n\n",f);
 	}
-	f.close();
+	fclose(f);
 	return 0;
 }
 
