@@ -33,21 +33,19 @@ int main()
 			cout<<"\nYour bid is created and waiting for the final confirmation from the admin.\n";
 			bid_no=count;
 		}
-		
+
 		fputs("Bid Number: ",f);
 		fwrite(&bid_no,bid_no.size()+1,1,f);
 		fputs("\n\n Bid Description: ",f);
 		fwrite(&bid_description,bid_description.size()+1,1,f);
 		fputs("\n\n Bid Title: ",f);
-		fwrite(&bid_title,bid_title.size()+1,f);
+		fwrite(&bid_title,bid_title.size()+1,1,f);
 		fputs("\n\nBid Amount: ",f);
 		fwrite(&bid_amount,bid_amount.size()+1,1,f);
 		fputs("\n\nDeadline: ",f);
 		fwrite(&deadline_date,deadline_date.size()+1,1,f);
 		fputs("\n\n",f);
 	}
-	f.close();
+	fclose(f);
 	return 0;
 }
-
-		 
