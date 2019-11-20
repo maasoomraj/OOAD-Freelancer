@@ -7,10 +7,34 @@ using namespace std;
 
 Color::Modifier red(Color::FG_RED);
 Color::Modifier blue(Color::FG_BLUE);
+Color::Modifier green(Color::FG_GREEN);
 Color::Modifier def(Color::FG_DEFAULT);
+
+int compareString(string a, string b)
+{
+  if (a.size() != b.size())
+  return 1;
+
+  for(int i=0;i<a.size();i++)
+  {
+    if(a[i] != b[i])
+    return 1;
+  }
+
+  return 0;
+}
+
+class readUser
+{
+public:
+  string f_name,l_name,age,email,city,state,contact,password;
+  int type;
+};
+
 
 class user
 {
+// public:
 private:
   string f_name,l_name,age,email,city,state,contact,password;
   int type;
@@ -128,18 +152,9 @@ public:
   }
   int getpassword(string c1, string c2)
   {
-    if(c1.size() != c2.size())
+    if(compareString(c1,c2))
     {
       cout<<red<<"\nError : Password doesnot matches.\n\n"<<def;
-      return 1;
-    }
-    for(int i=0;i<c1.size();i++)
-    {
-      if(c1[i] != c2[i])
-      {
-        cout<<red<<"\nError : Password doesnot matches.\n\n"<<def;
-        return 1;
-      }
     }
     password = c1;
     return 0;
@@ -163,6 +178,37 @@ public:
     }
     return 0;
   }
+
+
+  string showf_name()
+  {
+    return f_name;
+  }
+  string showl_name()
+  {
+    return l_name;
+  }
+  string showage()
+  {
+    return age;
+  }
+  string showemail()
+  {
+    return email;
+  }
+  string showcity()
+  {
+    return city;
+  }
+  string showstate()
+  {
+    return state;
+  }
+  string showcontact()
+  {
+    return contact;
+  }
+
 };
 
 class Employer : public user
@@ -174,6 +220,14 @@ class Freelancer : public user
 {
 
 };
+
+int agreecheck(string agree)
+{
+   if(!(agree[0] == 'y' || agree[0] == 'Y' ||agree[0] == 'n' || agree[0] == 'N' ))
+   return 1;
+   else
+   return 0;
+}
 
 std::ostream& bold_on(std::ostream& os)
 {
@@ -190,10 +244,10 @@ int main ()
   string first_ch;
   do
   {
-  cout<<blue<< bold_on<<"\n\n\tRegister/Login\n\t  1. Register (press 1)\n\t  1. Login (press 2)\n\n"<< bold_off<<def;
+  cout<<blue<< bold_on<<"\n\n\tRegister/Login\n\t  1. Register ("<<green<<"press 1"<<blue<<")\n\t  1. Login ("<<green<<"press 2"<<blue<<")\n\n"<< bold_off<<def;
   cin>>first_ch;
   }
-  while(!((first_ch[0] - 0 == 49 || first_ch[0] - 50 == 2) && first_ch.size() == 1));
+  while(!((first_ch[0] - 0 == 49 || first_ch[0] - 0 == 50) && first_ch.size() == 1));
 
   if(first_ch[0] - 0 == 49)
   {
@@ -201,7 +255,7 @@ int main ()
     string type;
     do
     {
-      cout<<blue<< bold_on<<"\tRegister as -\n\t  1. Employer (press 1)\n\t  1. Freelancer (press 2)\n\n"<< bold_off<<def;
+      cout<<blue<< bold_on<<"\tRegister as -\n\t  1. Employer ("<<green<<"press 1"<<blue<<")\n\t  1. Freelancer ("<<green<<"press 1"<<blue<<")\n\n"<< bold_off<<def;
       cin>>type;
     }
     while(newUser.gettype(type));
@@ -252,101 +306,100 @@ int main ()
       SetStdinEcho(true);
       cout<<"\n";
     } while(newUser.getpassword(password,c_password));
-    // type :
-    // cout<<"What are you - Employer/Freelancer\nPress 'e' for Employer and 'f' for Freelancer - ";
-    // cin>>type;
-    // if(!(type[0] - 0 == 69 || type[0] - 0 == 70 || type[0] - 0 == 101 || type[0] - 0 == 102))
-    // {
-    //   cout<<"\nError : You can enter only 'e' and 'f'.\n\n";
-    //   goto type;
-    // }
-    // if(type.size() != 1)
-    // {
-    //   cout<<"\nError : You can enter only 'e' and 'f'.\n\n";
-    //   goto type;
-    // }
-    // cout<<"Password - ";
-    // cin>>password;
-    // cout<<"Confirm Password - ";
-    // cin>>c_password;
-    // cout<<"\t\tTerms and Conditions -\n1. One email id can be used for one account.\n2. You can either be Employer or Freelancer.\n";
-    // cout<<"Do you agree that all details you entered are Correct (Y/N) - \n";
-    // cin>>agree;
-    // if(agree[0] == 'y' || agree[0] == 'Y')
-    // {
-    //   for(int i=0;i<l_name.size();i++)
-    //   {
-    //     if(!((l_name[i] -0 >= 65 && l_name[i]-0<=90) ||(l_name[i] -0 >= 97 && l_name[i]-0<=122)))
-    //       {
-    //         cout<<"\nError : Last Name can contain only alphabets.\n";
-    //         break;
-    //         error =1;
-    //       }
-    //   }
-    //   if(age >=85)
-    //   {
-    //     cout<<"\nError : Age can be less than 85.\n";
-    //     error =1;
-    //   }
-    //   if(!(contact >=1000000000 && contact<=9999999999))
-    //   {
-    //     cout<<"\nError : Contact Number is invalid.\n";
-    //     error =1;
-    //   }
-    //
-    //   if( password != c_password)
-    //   {
-    //     cout<<"\nError : Password doesn't matches in entries.\n";
-    //     error =1;
-    //   }
 
 
-      // if(error == 0)
-      // {
-      //   FILE *fp,*fp1;
-      //
-      //   if(type[0] - 0== 69 || type[0] - 0 == 101 )
-      //   {
-      //     fp = fopen ("Employer_List.txt","a");
-      //   }
-      //   else if (type[0] - 0== 70 || type[0] - 0 == 102 )
-      //   {
-      //     fp = fopen ("Freelancer_List.txt","a");
-      //   }
-      //     fwrite(&f_name,f_name.size()+1,1,fp );
-      //     fprintf(fp," ");
-      //     fwrite(&l_name,l_name.size()+1,1,fp );
-      //     fprintf(fp," ");
-      //     fprintf(fp,"%d ",age);
-      //     fwrite(&email,email.size()+1,1,fp );
-      //     fprintf(fp," ");
-      //     fwrite(&city,city.size()+1,1,fp );
-      //     fprintf(fp," ");
-      //     fwrite(&state,state.size()+1,1,fp );
-      //     fprintf(fp," ");
-      //     // fwrite(&contact,sizeof(long long),1,fp );
-      //     // fwrite(&password,sizeof(password),1,fp );
-      //     // fprintf(fp,"\t");
-      //
-      //
-      //   cout<<"\nUser Created Succesfully.\n\n";
-      //   fclose(fp);
-      //
-      //   // fp1 = fopen ("Freelancer_List.txt","r");
-      //   //
-      //   // string name;
-      //   // fscanf(fp1,"%s",&name);
-      //   // cout<<name;
-      //   // fclose(fp1);
-      // }
-  //   }
-  //
+    cout<<red<<"\n\tTerms and Conditions -\n   1. One email id can be used for one account.\n   2. You can either be Employer or Freelancer.\n"<<def;
+    do {
+      cout<<green<<"\n Do you agree that all details you entered are Correct (Y/N) - \n"<<def;
+      cin>>agree;
+    } while(agreecheck(agree));
+
+    if(agree[0] == 'y' || agree[0] == 'Y')
+    {
+
+      int error =0;
+      ifstream filecheck;
+      filecheck.open("details.txt", ios::in);
+      readUser checkDetails;
+
+      while(!filecheck.eof())
+      {
+        filecheck.read((char*)&checkDetails, sizeof(checkDetails));
+        if(!(compareString(newUser.showemail(),checkDetails.email)))
+        {
+          cout<<"\n   Error : Email id is already taken.\n\n";
+          error = 1;
+          break;
+        }
+        if(!(compareString(newUser.showcontact(),checkDetails.contact)))
+        {
+          cout<<"\n   Error : Phone Number is already taken.\n\n";
+          error = 1;
+          break;
+        }
+
+      }
+
+      if(error==0)
+      {
+        ofstream fp;
+
+        fp.open("details.txt", ios::app);
+        fp.write((char*)&newUser, sizeof(newUser));
+
+        cout<<"\n   User Created Succesfully.\n\n";
+      }
+
     }
-  // else
-  // {
-  //   cout<<"login\n";
-  // }
+  }
 
-// end:
+  else if(first_ch[0] - 0 == 50)
+  {
+    string email,password;
+    cout<<blue<< bold_on<<"\tEmail id - "<< bold_off<<def;
+    cin>>email;
+    cout<<blue<< bold_on<<"\tPassword- "<< bold_off<<def;
+    cin>>password;
+
+    int status=0;
+
+    ifstream filecheck;
+    filecheck.open("details.txt", ios::in);
+    readUser checkDetails;
+
+    while(!filecheck.eof())
+    {
+      filecheck.read((char*)&checkDetails, sizeof(checkDetails));
+      if(!(compareString(email,checkDetails.email)))
+      {
+
+        if(!(compareString(password,checkDetails.password)))
+        {
+          status =1;
+          break;
+        }
+        else
+        {
+          status =2;
+          cout<<"\n   Error : Password is wrong.\n\n";
+          break;
+        }
+
+      }
+
+    }
+
+    if (status ==1)
+    {
+      cout<<"\n   Logged in\n";
+    }
+    if(status == 0)
+    {
+      cout<<"\n   Error : Email is wrong.\n\n";
+    }
+
+  }
+
+
 return 0;
 }
