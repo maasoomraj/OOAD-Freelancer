@@ -2,6 +2,7 @@
 #include<fstream>
 #include<string>
 #include "password.h"
+#include "stdc.h"
 #include "color.h"
 using namespace std;
 
@@ -27,8 +28,9 @@ int compareString(string a, string b)
 class readUser
 {
 public:
-  string f_name,l_name,age,email,city,state,contact,password;
-  int type;
+  string email,password;
+  string type;
+  string f_name,l_name,age,city,state,contact;
 };
 
 
@@ -36,8 +38,10 @@ class user
 {
 // public:
 private:
-  string f_name,l_name,age,email,city,state,contact,password;
-  int type;
+  string email,password;
+  string type;
+  string f_name,l_name,age,city,state,contact;
+
    // age, email, city, state, contact, password;
 public:
   int getf_name(string c)
@@ -170,11 +174,11 @@ public:
 
     if(c[0] - 0 == 49)
     {
-      type =1;
+      type ="Employer";
     }
     else
     {
-      type =2;
+      type ="Freelancer";
     }
     return 0;
   }
@@ -321,7 +325,8 @@ int main ()
       ifstream filecheck;
       filecheck.open("details.txt", ios::in);
       readUser checkDetails;
-
+      if(filecheck != NULL)
+      {
       while(!filecheck.eof())
       {
         filecheck.read((char*)&checkDetails, sizeof(checkDetails));
@@ -339,6 +344,7 @@ int main ()
         }
 
       }
+    }
 
       if(error==0)
       {
@@ -359,7 +365,9 @@ int main ()
     cout<<blue<< bold_on<<"\tEmail id - "<< bold_off<<def;
     cin>>email;
     cout<<blue<< bold_on<<"\tPassword- "<< bold_off<<def;
+    SetStdinEcho(false);
     cin>>password;
+    SetStdinEcho(true);
 
     int status=0;
 
@@ -388,15 +396,123 @@ int main ()
       }
 
     }
-
-    if (status ==1)
-    {
-      cout<<"\n   Logged in\n";
-    }
     if(status == 0)
     {
       cout<<"\n   Error : Email is wrong.\n\n";
     }
+    if (status ==1)
+    {
+      int details_choice;
+      cout<<"\n\n   Logged in Succesfully.\n";
+      cout<<"\n\n   Hello "<<bold_on<<checkDetails.f_name<<bold_off<<",\n";
+      cout<<blue<<"\n   Account details - "<<green<<"(Press 1)\n"<<def;
+      cout<<blue<<"\n   Edit details - "<<green<<"(Press 2)\n"<<def;
+      cout<<blue<<"\n   Reset Password - "<<green<<"(Press 3)\n"<<def;
+      cin>>details_choice;
+
+
+
+      if(details_choice == 1)
+      {
+        cout<<bold_on<<"\n\n   Name - "<<bold_off<<checkDetails.f_name<<" "<<checkDetails.l_name<<endl;
+        cout<<bold_on<<"\n   Type - "<<bold_off;
+        if(checkDetails.type.size() == 8)
+        cout<<"Employer\n";
+        else
+        cout<<"Freelancer\n";
+        cout<<bold_on<<"\n   Age - "<<bold_off<<checkDetails.age<<endl;
+        cout<<bold_on<<"\n   City - "<<bold_off<<checkDetails.city<<endl;
+        cout<<bold_on<<"\n   State - "<<bold_off<<checkDetails.state<<endl<<endl;
+      }
+
+      else if(details_choice == 2)
+      {
+        int edit_no;
+        cout<<blue<<"\n   Edit Name - "<<green<<"(Press 1)\n"<<def;
+        cin>>edit_no;
+
+        if(edit_no == 1)
+        {
+          string new_fname,new_lname;
+          cout<<blue<<"\n   Enter New First Name - "<<"\n"<<def;
+          cin>>new_fname;
+          checkDetails.f_name = new_fname;
+          cout<<blue<<"\n   Enter New Last Name - "<<"\n"<<def;
+          cin>>new_lname;
+          checkDetails.l_name = new_lname;
+
+          ofstream fp1;
+          fp1.open("newfile.txt", ios::app);
+          ifstream fp;
+          fp.open("details.txt", ios::in);
+          readUser user_new;
+          if(fp != NULL)
+          {
+          while(!fp.eof())
+          {
+            fp.read((char*)&user_new, sizeof(user_new));
+            if(!(compareString(user_new.email,checkDetails.email)))
+            {
+              fp1.write((char*)&checkDetails, sizeof(checkDetails));
+            }
+            else
+            {
+              fp1.write((char*)&user_new, sizeof(user_new));
+            }
+
+          }
+        }
+
+        remove("details.txt");
+        rename("newfile.txt", "details.txt");
+        }
+      }
+
+      else if(details_choice == 3)
+      {
+        string new_pass,new_cpass;
+        do{
+          cout<<blue<<"\n   Enter New password - "<<"\n"<<def;
+          SetStdinEcho(false);
+          cin>>new_pass;
+          SetStdinEcho(true);
+          cout<<blue<<"\n   Confirm new password - "<<"\n"<<def;
+          SetStdinEcho(false);
+          cin>>new_cpass;
+          SetStdinEcho(true);
+        }while((compareString(new_pass,new_cpass)));
+
+          checkDetails.password = new_pass;
+
+          ofstream fp1;
+          fp1.open("newfile.txt", ios::app);
+          ifstream fp;
+          fp.open("details.txt", ios::in);
+          readUser user_new;
+          if(fp != NULL)
+          {
+          while(!fp.eof())
+          {
+            fp.read((char*)&user_new, sizeof(user_new));
+            if(!(compareString(user_new.email,checkDetails.email)))
+            {
+              fp1.write((char*)&checkDetails, sizeof(checkDetails));
+            }
+            else
+            {
+              fp1.write((char*)&user_new, sizeof(user_new));
+            }
+
+          }
+        }
+
+        remove("details.txt");
+        rename("newfile.txt", "details.txt");
+        }
+      }
+
+
+
 
   }
 

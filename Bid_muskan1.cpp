@@ -18,36 +18,36 @@ class bid
 	string bid_title, bid_description, bid_amount;
 	string deadline_date;
 	char agree;
-	string bid_no;
-		
+	int bid_no;
+
 	void create_bid()
 	{
 		FILE *f;
 		f= fopen("Bid_List.txt","a");
-		
-		
-			cout<<blue<<"\nNow enter bid details\n";
-			cout<<blue<<"\nEnter bid description\n";
+
+
+			cout<<blue<<"\n\t  Bid details -\n\n";
+			cout<<blue<<"\n   Enter bid description\n\n";
 			getline(cin,bid_description);
-			cout<<blue<<"\nEnter bid title\n";
+			cout<<blue<<"\n   Enter bid title\n\n";
 			getline(cin,bid_title);
-			cout<<blue<<"\nEnter bid amount";
+			cout<<blue<<"\n   Enter bid amount\n\n";
 			cin>>bid_amount;
-			cout<<blue<<"\nEnter deadline date\n";
+			cout<<blue<<"\n   Enter deadline date\n\n";
 			getline(cin,deadline_date);
-			cout<<blue<<"\n Confirm details or Cancel\n Enter Y to continue else enter N\n";
+			cout<<blue<<"\n   Confirm details or Cancel\n\n Enter Y to continue else enter N\n";
 			cin>>agree;
 			if(agree=='Y' || agree=='y')
 			{	count++;
 				cout<<"\nYour bid is created and waiting for the final confirmation from the admin.\n";
 				bid_no=count;
 			}
-		
-			fwrite(&bid_no,bid_no.size()+1,1,f);
+
+			fwrite(&bid_no,sizeof(int),1,f);
 			fputs("\t\t",f);
 			fwrite(&bid_description,bid_description.size()+1,1,f);
 			fputs("\t\t",f);
-			fwrite(&bid_title,bid_title.size()+1,f);
+			fwrite(&bid_title,bid_title.size()+1,1,f);
 			fputs("\t\t",f);
 			fwrite(&bid_amount,bid_amount.size()+1,1,f);
 			fputs("\t\t",f);
@@ -55,9 +55,9 @@ class bid
 			fputs("\n\n",f);
 		}
 	fclose(f);
-	
+
 };
-		
+
 int main()
 {
 	char create_bid;
@@ -67,10 +67,8 @@ int main()
 	{
 		bid obj;
 		obj.create_bid();
-	
-	}	
-	
+
+	}
+
 	return 0;
 }
-
-		 
