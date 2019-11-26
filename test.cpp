@@ -30,21 +30,26 @@ int main ()
   string first_ch;
   do
   {
-  cout<<blue<< bold_on<<"\n\n\tRegister/Login\n\t  1. Register ("<<green<<"press 1"<<blue<<")\n\t  2. Login ("<<green<<"press 2"<<blue<<")\n\n"<< bold_off<<def;
+    main_header();
+  cout<<blue<< bold_on<<"\n\n\tRegister/Login\n\t  1. Register ("<<green<<"press 1"<<blue<<")\n\t  2. Login ("<<green<<"press 2"<<blue<<")"<<"\n\t  3. Forgot Password ("<<green<<"press 3"<<blue<<")\n\n"<< bold_off<<def;
+  choice();
   cin>>first_ch;
   }
-  while(!((first_ch[0] - 0 == 49 || first_ch[0] - 0 == 50) && first_ch.size() == 1));
+  while(!((first_ch[0] - 0 >= 49 && first_ch[0] - 0 <= 51) && first_ch.size() == 1));
 
 
   //REGISTER CODE START -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
   if(first_ch[0] - 0 == 49)
   {
     systemClear();
+    main_header();
     user newUser;
     string type;
     do
     {
+
       cout<<blue<< bold_on<<"\n\n\tRegister as -\n\t  1. Employer ("<<green<<"press 1"<<blue<<")\n\t  2. Freelancer ("<<green<<"press 2"<<blue<<")\n\n"<< bold_off<<def;
+      choice();
       cin>>type;
     }
     while(newUser.gettype(type));
@@ -55,6 +60,7 @@ int main ()
     string age;
     string contact;
     systemClear();
+    main_header();
     cout<<blue<< bold_on<<"\n\n\tEnter your Details to Register - \n\n"<< bold_off<<def;
     do {
       cout<<blue<< bold_on<<"\tFirst Name - "<< bold_off<<def;
@@ -84,18 +90,20 @@ int main ()
       cout<<blue<< bold_on<<"\tContact - "<< bold_off<<def;
       cin>>contact;
     } while(newUser.getcontact(contact));
+    string new_pass,new_cpass;
     do {
       cout<<blue<< bold_on<<"\tPassword - "<< bold_off<<def;
       SetStdinEcho(false);
-      cin>>password;
+      cin>>new_pass;
       SetStdinEcho(true);
       cout<<"\n";
       cout<<blue<< bold_on<<"\tConfirm Password - "<< bold_off<<def;
       SetStdinEcho(false);
-      cin>>c_password;
+      cin>>new_cpass;
       SetStdinEcho(true);
       cout<<"\n";
-    } while(newUser.getpassword(password,c_password));
+    }while((compareString(new_pass,new_cpass)));
+    newUser.getpassword(new_pass,new_cpass);
 
 
     cout<<red<<"\n\tTerms and Conditions -\n   1. One email id can be used for one account.\n   2. You can either be Employer or Freelancer.\n"<<def;
@@ -160,6 +168,7 @@ int main ()
   else if(first_ch[0] - 0 == 50)
   {
     systemClear();
+    main_header();
     string email,password;
     cout<<blue<< bold_on<<"\n\n\tEmail id - "<< bold_off<<def;
     cin>>email;
@@ -202,7 +211,147 @@ int main ()
 
     }
   }
-}//LOGIN CODE END -
+  //LOGIN CODE END -
+
+
+
+  //RESET PASSWORD CODE ENDED --
+  if(first_ch[0] - 0 == 51)
+  {
+    systemClear();
+    main_header();
+    string email;
+    cout<<"\n\n   Enter Your email id - ";
+    space();
+    cin>>email;
+
+
+
+    ifstream f;
+    f.open("sf/forgot_pass/forgot_no.txt");
+    ofstream f1;
+    f1.open("sf/forgot_pass/forgot_no1.txt");
+    int n=0;
+    if(f)
+    {
+      f>>n;
+      f1<<n+1;
+    }
+    else
+    {
+      f1<<n;
+    }
+    f.close();
+    f1.close();
+
+    remove("sf/forgot_pass/forgot_no.txt");
+    rename("sf/forgot_pass/forgot_no1.txt","sf/forgot_pass/forgot_no.txt");
+    ifstream fp;
+    fp.open("sf/forgot_pass/check.txt",ios::in);
+    string s;
+    int m = n%20;
+    while(m--)
+    {
+      fp.read((char*)&s, sizeof(std::string));
+    }
+    fp.read((char*)&s, sizeof(std::string));
+
+
+    string mail  = "Hello User,\n\nYour verification code is "+ s+" .";
+    ofstream file;
+    file.open ("sf/forgot_pass/mail_code.txt");
+    file << mail;
+    file.close();
+    string mail_system = "neomutt -s \"Request for Password Reset\" "+email+" < sf/forgot_pass/mail_code.txt";
+
+    const char *command = mail_system.c_str();
+    system(command);
+
+    systemClear();
+    main_header();
+
+    string verification_code;
+
+    for(int i=3;i>0;i--)
+    {
+      if(i!=3)
+      cout<<"   Only "<<i<<" chances Available.\n\n";
+      cout<<"\n\n   Enter the code -";
+      cin>>verification_code;
+      if(!(compareString(s,verification_code)))
+      {
+        ofstream fp1;
+        fp1.open("sf/User/newfile.txt", ios::app);
+        ifstream fp;
+        fp.open("sf/User/details.txt", ios::in);
+        readUser user_new;
+        if(fp != NULL)
+        {
+        while(!fp.eof())
+        {
+          fp.read((char*)&user_new, sizeof(user_new));
+          if(!(compareString(user_new.email,email)))
+          {
+            string new_cpass;
+            string new_pass;
+
+            do{
+              cout<<blue<<"\n   Enter New password - "<<"\n"<<def;
+              space();
+              SetStdinEcho(false);
+              cin>>new_pass;
+              SetStdinEcho(true);
+              cout<<blue<<"\n   Confirm new password - "<<"\n"<<def;
+              space();
+              SetStdinEcho(false);
+              cin>>new_cpass;
+              SetStdinEcho(true);
+            }while((compareString(new_pass,new_cpass)));
+
+            user_new.password = new_pass;
+
+
+            fp1.write((char*)&user_new, sizeof(user_new));
+          }
+          else
+          {
+            fp1.write((char*)&user_new, sizeof(user_new));
+          }
+
+        }
+      }
+
+      remove("sf/User/details.txt");
+      rename("sf/User/newfile.txt", "sf/User/details.txt");
+
+
+        string mail  = "Hello User,\n\nYour Password was reset Succesfully .";
+        ofstream file;
+        file.open ("sf/forgot_pass/mail_true_code.txt");
+        file << mail;
+        file.close();
+        string mail_system = "neomutt -s \"Password Reset Succesfully\" "+email+" < sf/forgot_pass/mail_true_code.txt";
+
+        const char *command = mail_system.c_str();
+        system(command);
+        goto start;
+      }
+      else
+      {
+        cout<<"Wrong Code";
+      }
+    }
+    systemClear();
+    goto start;
+
+
+
+  }
+  //RESET PASSWORD CODE ENDED --
+
+
+}
+
 else
 {
   status = 1;
@@ -223,6 +372,7 @@ else
       int details_choice;
       cout<<endl;
       header(checkDetails.f_name + " " +checkDetails.l_name);
+
       cout<<blue<<"\n   Account details - "<<green<<"(Press 1)\n"<<def;
       cout<<blue<<"\n   Edit details - "<<green<<"(Press 2)\n"<<def;
       cout<<blue<<"\n   Reset Password - "<<green<<"(Press 3)\n"<<def;
@@ -255,16 +405,21 @@ else
       if(checkDetails.type.size() == 8)
       {
         cout<<blue<<"\n   Select a bid - "<<green<<"(Press 9)\n"<<def;
+        cout<<blue<<"\n   Delete a Job - "<<green<<"(Press 10)\n"<<def;
+
       }
-      else
-      {
-        cout<<blue<<"\n   View my Accepted Bids - "<<green<<"(Press 9)\n"<<def;
-      }
+
       choice();
       cin>>details_choice;
       if(details_choice == 0)
       {
         remove("sf/User/currentUser.txt");
+        systemClear();
+        goto start;
+      }
+
+      else if(details_choice == -1)
+      {
         systemClear();
         return 0;
       }
@@ -274,6 +429,7 @@ else
       if(details_choice == 1)
       {
         systemClear();
+        page_header(checkDetails.f_name + " " +checkDetails.l_name);
         cout<<bold_on<<"\n\n   Name - "<<bold_off<<checkDetails.f_name<<" "<<checkDetails.l_name<<endl;
         cout<<bold_on<<"\n   Type - "<<bold_off;
         if(checkDetails.type.size() == 8)
@@ -284,9 +440,13 @@ else
         cout<<bold_on<<"\n   City - "<<bold_off<<checkDetails.city<<endl;
         cout<<bold_on<<"\n   State - "<<bold_off<<checkDetails.state<<endl<<endl;
         string randomstr;
-        cout<<red<<"\n\nPress any key to go to menu."<<def;
-        cin>>randomstr;
-        if(randomstr[0] -0>=1)
+
+        //PRESS ENTER TO CONTINUE ----
+        std::cout <<red<< "\n   Press Enter to continue. "<<def;
+        fgetc(stdin);
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        //PRESS ENTER TO CONTINUE ----
+
         goto first_page;
       }
       //ACCOUNT DETAILS CODE START -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
@@ -296,6 +456,7 @@ else
       else if(details_choice == 2)
       {
         systemClear();
+        page_header(checkDetails.f_name + " " +checkDetails.l_name);
         int edit_no;
         cout<<blue<<"\n\n   Edit Name - "<<green<<"(Press 1)\n"<<def;
         choice();
@@ -304,6 +465,7 @@ else
         if(edit_no == 1)
         {
           systemClear();
+          page_header(checkDetails.f_name + " " +checkDetails.l_name);
           string new_fname,new_lname;
           cout<<blue<<"\n\n   Enter New First Name - "<<"\n"<<def;
           space();
@@ -338,6 +500,13 @@ else
 
         remove("sf/User/details.txt");
         rename("sf/User/newfile.txt", "sf/User/details.txt");
+
+        //PRESS ENTER TO CONTINUE ----
+        std::cout <<red<< "\n   Press Enter to continue. "<<def;
+        fgetc(stdin);
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        //PRESS ENTER TO CONTINUE ----
+
         goto first_page;
         }
       }
@@ -349,6 +518,7 @@ else
       else if(details_choice == 3)
       {
         systemClear();
+        page_header(checkDetails.f_name + " " +checkDetails.l_name);
         string new_pass,new_cpass;
         do{
           cout<<blue<<"\n   Enter New password - "<<"\n"<<def;
@@ -389,6 +559,13 @@ else
 
         remove("sf/User/details.txt");
         rename("sf/User/newfile.txt", "sf/User/details.txt");
+
+        //PRESS ENTER TO CONTINUE ----
+        std::cout <<red<< "\n   Press Enter to continue. "<<def;
+        fgetc(stdin);
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        //PRESS ENTER TO CONTINUE ----
+
         goto start;
         }
         //RESET PASSWORD CODE END -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
@@ -396,8 +573,8 @@ else
         // CREATE JOB (employer) CODE START -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
         else if(details_choice == 4 && (checkDetails.type.size() == 8))
         {
-
-
+          systemClear();
+          page_header(checkDetails.f_name + " " +checkDetails.l_name);
           string s;
           char ch;
           cout<<endl<<"Do you want to create a job?   (Y/N)";
@@ -440,8 +617,6 @@ else
               ofstream f1;
               ifstream f;
               f.open("sf/Job/Job_No.txt", ios::in);
-              char ch;
-              int x;
               JobNo jobno;
               if(f != NULL)
               {
@@ -466,7 +641,7 @@ else
               j.get_JobId(jobid);
 
               ifstream file_job_create;
-              file_job_create.open("sf/Job/jobs_file/"+ jobid, ios::app);
+              file_job_create.open("sf/Job/jobs_file/"+ jobid+".txt", ios::app);
 
               ofstream fp;
 
@@ -476,14 +651,34 @@ else
 
 
               cout<<"Job Id : "<<bold_on<<jobid<< bold_off<<" Created Succesfully."<<endl<<endl;
+
+              string mail  = "Hello "+checkDetails.email+",\n\nYou just created a Job with Job ID : "+j.show_job()+" .\n For future refrences, the details of job are here - \n   Job ID : "+j.show_job()+"\n   Title : "+j.show_title()+"\n   Description : "+j.show_description()+"\n   Price : "+j.show_price()+"\n   Deadline : "+j.show_deadline()+"\n\nPlease login to check more.\n\n  Regards,\n  Freelancing Portal.";
+              ofstream file;
+              file.open ("sf/Mail/Rejectedmail.txt");
+              file << mail;
+              file.close();
+              string mail_system = "neomutt -s \"Reg. Created a Job\" "+checkDetails.email+" < sf/Mail/Rejectedmail.txt";
+
+              const char *command = mail_system.c_str();
+              system(command);
+
+              //PRESS ENTER TO CONTINUE ----
+              std::cout <<red<< "\n   Press Enter to continue. "<<def;
+              fgetc(stdin);
+              std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+              //PRESS ENTER TO CONTINUE ----
+              goto first_page;
               // goto first_page;
               }
               else
               {
-                  return 0;
+                //PRESS ENTER TO CONTINUE ----
+                std::cout <<red<< "\n   Press Enter to continue. "<<def;
+                fgetc(stdin);
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                //PRESS ENTER TO CONTINUE ----
+                goto first_page;
               }
-
-
           }
 
 
@@ -493,36 +688,74 @@ else
 
       else if(details_choice == 4 && (checkDetails.type.size() == 10))
       {
+        systemClear();
+        page_header(checkDetails.f_name + " " +checkDetails.l_name);
         string s, currentJob;
         char ch;
-        cout<<endl<<"Do you want to create a Bid?   (Y/N)";
+        cout<<endl<<"Do you want to create a Bid? (Y/N)";
+        space();
         cin>>ch;
         if(ch=='Y'||ch=='y')
         {
             Bid b;
-            cout<<endl<<"Enter the jobID of the Job you want to Bin on";
+            cout<<endl<<"Enter the Job ID of the Job you want to Bin on :";
+            space();
             cin>>s;
             currentJob = s;
             // Put condition to check if such a job ID exits
             b.get_jobID(s);
-            cout<<endl<<"Enter your email again"<<endl;
+            cout<<endl<<"Enter your email again : "<<endl;
+            space();
             cin>>s;
             b.get_email(s);
-            cout<<endl<<"Enter Bid decription"<<endl;
+            cout<<endl<<"Enter Bid decription : "<<endl;
+            space();
             cin>>s;
             b.get_description(s);
-            cout<<endl<<"Enter amount willing to take for this Job"<<endl;
+            cout<<endl<<"Enter amount willing to take for this Job : "<<endl;
+            space();
             do
             {
                 cin>>s;
             }
             while(b.get_amount(s)==0);
-            cout<<endl<<"Are you sure you want to continue"<<endl;
+            cout<<endl<<bold_on<<"Are you sure you want to continue : (Y/N)"<<bold_off<<endl;
+            space();
             cin>>ch;
             if(ch=='y' || ch=='Y')
             {
+
+                ifstream f_if;
+                f_if.open("sf/Bid/bid_no.txt");
+                ofstream f_of;
+                f_of.open("sf/Bid/bid_no1.txt");
+                int n=1;
+                if(f_if)
+                {
+                  f_if>>n;
+                  f_of<<n+1;
+                }
+                else
+                {
+                  f_of<<n;
+                }
+                f_if.close();
+                f_of.close();
+
+                remove("sf/Bid/bid_no.txt");
+                rename("sf/Bid/bid_no1.txt","sf/Bid/bid_no.txt");
+
+                stringstream sso;
+                sso<<n;
+                string number_bid;
+                sso>>number_bid;
+                string bidId = "Bid"+number_bid;
+
+                b.get_BidNo(bidId);
+
+
                 ofstream f;
-                f.open("sf/Job/jobs_file/"+currentJob,ios::app); // Open file with the current jobNo...eg Job1.txt
+                f.open("sf/Job/jobs_file/"+currentJob+".txt",ios::app); // Open file with the current jobNo...eg Job1.txt
                 if(f)
                 {
                     f.write((char*)&b, sizeof(b));
@@ -533,11 +766,36 @@ else
                 {
                     p.write((char*)&b, sizeof(b));
                 }
-                cout<<"\n Bid Created Succesfully.\n";
+                cout<<"\n   "<<b.show_BidNo()<<"  :  Bid Created Succesfully.\n";
+
+
+                string mail  = "Hello "+b.show_email()+",\n\nYou just created a bid with Bid Id : "+b.show_BidNo()+" on Job with Job Id : "+b.show_job()+" .\nHere are your bid details for Future Reference :\n   Bid Id : "+b.show_BidNo()+"\n   Bid Amount : "+b.show_amount()+"\n   Job ID : "+b.show_job()+"\n   Bid Description : "+b.show_description()+"\n\nPlease login to check more.\n\nRegards,\nFreelancing Portal";
+                ofstream file;
+                file.open ("sf/Mail/Rejectedmail.txt");
+                file << mail;
+                file.close();
+                string mail_system = "neomutt -s \"Reg. Created a Bid\" "+b.show_email()+" < sf/Mail/Rejectedmail.txt";
+
+                const char *command = mail_system.c_str();
+                system(command);
+
+
+                //PRESS ENTER TO CONTINUE ----
+                std::cout <<red<< "\n   Press Enter to continue. "<<def;
+                fgetc(stdin);
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                //PRESS ENTER TO CONTINUE ----
+                goto first_page;
+
             }
             else
             {
-                return 0;
+              //PRESS ENTER TO CONTINUE ----
+              std::cout <<red<< "\n   Press Enter to continue. "<<def;
+              fgetc(stdin);
+              std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+              //PRESS ENTER TO CONTINUE ----
+              goto first_page;
             }
         }
       }
@@ -546,14 +804,18 @@ else
         else if(details_choice == 5)
         {
           systemClear();
+          page_header(checkDetails.f_name + " " +checkDetails.l_name);
           ifstream filecheck;
           filecheck.open("sf/Job/Job.txt", ios::in);
           Job1 job_class;
+          string repeat="0";
           if(filecheck != NULL)
           {
           while(!filecheck.eof())
           {
             filecheck.read((char*)&job_class, sizeof(job_class));
+
+            if((compareString(repeat,job_class.JobId)))
             if(!(compareString("0",job_class.isApproved)))
             {
               if(!(compareString("0",job_class.isTaken)))
@@ -561,8 +823,17 @@ else
               cout<<"\nJob  -  "<<bold_on<<job_class.JobId<<bold_off<<" : "<<job_class.title<<"\n\n";
               }
             }
+            repeat = job_class.JobId;
             }
           }
+
+          //PRESS ENTER TO CONTINUE ----
+          std::cout <<red<< "\n   Press Enter to continue. "<<def;
+          fgetc(stdin);
+          std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+          //PRESS ENTER TO CONTINUE ----
+          goto first_page;
+
         }
         // CHECK AVAILBALE JOB (freelancer) CODE END -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
@@ -570,6 +841,8 @@ else
         else if(details_choice == 6)
         {
           systemClear();
+          page_header(checkDetails.f_name + " " +checkDetails.l_name);
+
           string s_input;
           cout<<"\n\n\t Enter Job Id : ";
           cin>>s_input;
@@ -591,6 +864,13 @@ else
               break;
             }
           }
+
+          //PRESS ENTER TO CONTINUE ----
+          std::cout <<red<< "\n   Press Enter to continue. "<<def;
+          fgetc(stdin);
+          std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+          //PRESS ENTER TO CONTINUE ----
+          goto first_page;
         }
         //SEARCH BY JOB_ID CODE ENDED ----
 
@@ -598,14 +878,18 @@ else
         else if(details_choice == 7 && (checkDetails.type.size() == 8))
         {
           systemClear();
+          page_header(checkDetails.f_name + " " +checkDetails.l_name);
+
           ifstream filecheck;
           filecheck.open("sf/Job/Job.txt", ios::in);
           Job1 job_class;
+          string repeat="0";
           if(filecheck != NULL)
           {
           while(!filecheck.eof())
           {
             filecheck.read((char*)&job_class, sizeof(job_class));
+            if((compareString(repeat,job_class.JobId)))
             if(!(compareString("0",job_class.isApproved)))
               {
                 if(!(compareString("0",job_class.isTaken)))
@@ -614,8 +898,16 @@ else
                     cout<<"\nJob  -  "<<bold_on<<job_class.JobId<<bold_off<<" : "<<job_class.title<<"\n\n";
                 }
               }
+              repeat = job_class.JobId;
             }
           }
+
+          //PRESS ENTER TO CONTINUE ----
+          std::cout <<red<< "\n   Press Enter to continue. "<<def;
+          fgetc(stdin);
+          std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+          //PRESS ENTER TO CONTINUE ----
+          goto first_page;
         }
         //VIEW MY JOBS CODE ENDED -----
 
@@ -624,14 +916,18 @@ else
         else if(details_choice == 7 && (checkDetails.type.size() == 10))
         {
           systemClear();
+          page_header(checkDetails.f_name + " " +checkDetails.l_name);
+
           ifstream filecheck;
           filecheck.open("sf/Bid/Bid.txt", ios::in);
           Bid1 bid_class;
+          string repeat ="0";
           if(filecheck != NULL)
           {
           while(!filecheck.eof())
           {
             filecheck.read((char*)&bid_class, sizeof(bid_class));
+            if((compareString(repeat,bid_class.BidNo)))
             if(!(compareString(checkDetails.email,bid_class.email)))
               {
                 cout<<"\n   Bid on JobID : "+bid_class.jobID<<"\t"<<bold_on<<"Status : "<<bold_off;
@@ -649,8 +945,16 @@ else
                   cout<<bold_on<<"PENDING\n\n"<<bold_off;
                 }
               }
+              repeat = bid_class.BidNo;
             }
           }
+
+          //PRESS ENTER TO CONTINUE ----
+          std::cout <<red<< "\n   Press Enter to continue. "<<def;
+          fgetc(stdin);
+          std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+          //PRESS ENTER TO CONTINUE ----
+          goto first_page;
         }
         //VIEW MY BIDS CODE ENDED -----
 
@@ -660,23 +964,35 @@ else
         else if(details_choice == 8 && (checkDetails.type.size() == 8))
         {
           systemClear();
+          page_header(checkDetails.f_name + " " +checkDetails.l_name);
+
           string s_input;
           cout<<"\n\n\t Enter Job Id : ";
           cin>>s_input;
 
           ifstream filecheck;
-          filecheck.open("sf/Job/jobs_file/"+s_input, ios::in);
+          filecheck.open("sf/Job/jobs_file/"+s_input+".txt", ios::in);
           Bid1 bid_class;
+          string repeat ="0";
           if(filecheck != NULL)
           {
           while(!filecheck.eof())
           {
             filecheck.read((char*)&bid_class, sizeof(bid_class));
 
-            cout<<"\nBid  -  "<<bold_on<<bid_class.email<<bold_off<<" : "<<bid_class.amount<<"\n\n";
+            if((compareString(repeat,bid_class.BidNo)))
+            cout<<"\nBid  -  "<<bold_on<<bid_class.BidNo<<bold_off<<" : "<<bid_class.amount<<"\n\n";
+            repeat = bid_class.BidNo;
 
             }
           }
+
+          //PRESS ENTER TO CONTINUE ----
+          std::cout <<red<< "\n   Press Enter to continue. "<<def;
+          fgetc(stdin);
+          std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+          //PRESS ENTER TO CONTINUE ----
+          goto first_page;
         }
         //VIEW BIDS ON JOB CODE START -----
 
@@ -685,14 +1001,18 @@ else
         else if(details_choice == 8 && (checkDetails.type.size() == 10))
         {
           systemClear();
+          page_header(checkDetails.f_name + " " +checkDetails.l_name);
+
           ifstream filecheck;
           filecheck.open("sf/Bid/Bid.txt", ios::in);
           Bid1 bid_class;
+          string repeat ="0";
           if(filecheck != NULL)
           {
           while(!filecheck.eof())
           {
             filecheck.read((char*)&bid_class, sizeof(bid_class));
+            if((compareString(repeat,bid_class.BidNo)))
             if(!(compareString(checkDetails.email,bid_class.email)))
               {
                 if(!(compareString(bid_class.isAccepted,"2")))
@@ -701,14 +1021,209 @@ else
                   cout<<green<<bold_on<<"ACCEPTED\n\n"<<bold_off<<def;
                 }
               }
+              repeat = bid_class.BidNo;
             }
           }
+
+          //PRESS ENTER TO CONTINUE ----
+          std::cout <<red<< "\n   Press Enter to continue. "<<def;
+          fgetc(stdin);
+          std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+          //PRESS ENTER TO CONTINUE ----
+          goto first_page;
         }
-        //VIEW MY ACCEPTED BIDS CODE ENDED -----
+
+        else if(details_choice==9 && (checkDetails.type.size() == 8))
+        {
+            systemClear();
+            page_header(checkDetails.f_name + " " +checkDetails.l_name);
 
 
-      }
+            // Job1 job;
+            // Bid1 bid;
+            string job_id,bid_id;
+            cout<<blue<<"\n\n   Enter JobId : "<<def;
+            space();
+            cin>>job_id;
+            cout<<blue<<"   Enter BidId you want to select for "<<job_id<<" : "<<def;
+            space();
+            cin>>bid_id;
 
+            cout<<"\n\n   Please hold on while we are making required changes.\n";
+            // job.JobId=job_id;
+
+
+            ofstream fp11;
+            fp11.open("sf/Job/jobs_file/newfile.txt", ios::app);
+            ifstream fp12;
+            fp12.open("sf/Job/jobs_file/"+job_id+".txt", ios::in);
+            Bid1 user_new1;
+            if(fp12 != NULL)
+            {
+            while(!fp12.eof())
+            {
+              fp12.read((char*)&user_new1, sizeof(user_new1));
+                if(!(compareString(user_new1.BidNo ,bid_id)))
+                {
+                  user_new1.isAccepted ="2";
+                  fp11.write((char*)&user_new1, sizeof(user_new1));
+                }
+            }
+            }
+
+                string change_file = "sf/Job/jobs_file/"+job_id+".txt";
+                string change_file1 = "rm "+change_file;
+                const char *command = change_file1.c_str();
+                system(command);
+                string change_file2 = "mv sf/Job/jobs_file/newfile.txt "+change_file;
+                const char *command1 = change_file2.c_str();
+                system(command1);
+
+
+
+                ofstream fp1;
+                fp1.open("sf/Bid/newfile.txt", ios::app);
+                ifstream fp;
+                fp.open("sf/Bid/Bid.txt", ios::in);
+                Bid1 user_new;
+                string repeat = "0";
+                if(fp != NULL)
+                {
+                while(!fp.eof())
+                {
+                  fp.read((char*)&user_new, sizeof(user_new));
+                  if((compareString(repeat,user_new.BidNo)))
+                  {
+                    if(!(compareString(user_new.jobID ,job_id)))
+                    {
+
+                      if(!(compareString(user_new.BidNo ,bid_id)))
+                      {
+                        user_new.isAccepted ="2";
+                        string mail  = "Hello "+user_new.email+",\n\nCongratulations, Your bid with Bid Id : "+user_new.BidNo+" on Job with Job Id : "+user_new.jobID+" just got selected. The employer hired you as a Freelancer. Please login to details of Job.";
+                        ofstream file;
+                        file.open ("sf/Mail/Acceptedmail.txt");
+                        file << mail;
+                        file.close();
+                        string mail_system = "neomutt -s \"Reg. Bid got Selected\" "+user_new.email+" < sf/Mail/Acceptedmail.txt";
+
+                        const char *command = mail_system.c_str();
+                        system(command);
+                      }
+                      else
+                      {
+                        user_new.isAccepted ="1";
+                        string mail  = "Hello "+user_new.email+",\n\nWe are sorry as your bid with Bid Id : "+user_new.BidNo+" on Job with Job Id : "+user_new.jobID+" just got rejected by the employer. Please login to check more.";
+                        ofstream file;
+                        file.open ("sf/Mail/Rejectedmail.txt");
+                        file << mail;
+                        file.close();
+                        string mail_system = "neomutt -s \"Reg. Bid got Rejected\" "+user_new.email+" < sf/Mail/Rejectedmail.txt";
+
+                        const char *command = mail_system.c_str();
+                        system(command);
+                      }
+
+                      fp1.write((char*)&user_new, sizeof(user_new));
+                    }
+                    else
+                    {
+                      fp1.write((char*)&user_new, sizeof(user_new));
+                    }
+                  }
+
+
+                  repeat = user_new.BidNo;
+
+                }
+                }
+
+              remove("sf/Bid/Bid.txt");
+              rename("sf/Bid/newfile.txt", "sf/Bid/Bid.txt");
+
+
+              ofstream delete_job;
+              delete_job.open("sf/Job/new_job.txt",ios::app);
+              ifstream delete_if;
+              delete_if.open("sf/Job/Job.txt",ios::in);
+              Job1 delete_class;
+              if(delete_if)
+              {
+                  while(!delete_if.eof())
+                  {
+                      delete_if.read((char*)&delete_class, sizeof(delete_class));
+                      if(!(compareString(delete_class.JobId,user_new.jobID)))
+                      {
+                        delete_class.isTaken = "1";
+                        delete_job.write((char*)&delete_class, sizeof(delete_class));
+                      }
+                      else
+                      {
+                        delete_job.write((char*)&delete_class, sizeof(delete_class));
+                      }
+
+                  }
+              }
+              remove("sf/Job/Job.txt");
+              rename("sf/Job/new_job.txt","sf/Job/Job.txt");
+
+
+              //PRESS ENTER TO CONTINUE ----
+              std::cout <<red<< "\n   Press Enter to continue. "<<def;
+              fgetc(stdin);
+              std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+              //PRESS ENTER TO CONTINUE ----
+              goto first_page;
+            }
+
+            else if(details_choice==10 && (checkDetails.type.size() == 8) )
+            {
+              systemClear();
+              page_header(checkDetails.f_name + " " +checkDetails.l_name);
+                //systemclear()
+                Job1 j;
+                string job_id;
+                cout<<blue<<"\n\n   Enter JobId to be deleted"<<def;
+                space();
+                cin>>job_id;
+                j.JobId=job_id;
+
+                ofstream del_job1;
+                del_job1.open("sf/Job/new_job.txt",ios::app);
+                ifstream del_job;
+                del_job.open("sf/Job/Job.txt",ios::in);
+                Job1 delJob;
+                if(del_job)
+                {
+                    while(!del_job.eof())
+                    {
+                        del_job.read((char*)&delJob, sizeof(delJob));
+                        if(!(compareString(delJob.JobId,j.JobId)));
+                        else
+                        {
+                          del_job1.write((char*)&delJob, sizeof(delJob));
+                        }
+
+                    }
+                }
+                remove("sf/Job/Job.txt");
+                rename("sf/Job/new_job.txt","sf/Job/Job.txt");
+                string del_file = "sf/Job/jobs_file/"+job_id+".txt";
+                string del_file1 = "rm "+del_file;
+                const char *command = del_file1.c_str();
+                system(command);
+
+                //PRESS ENTER TO CONTINUE ----
+                std::cout <<red<< "\n   Press Enter to continue. "<<def;
+                fgetc(stdin);
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                //PRESS ENTER TO CONTINUE ----
+                goto first_page;
+                // goto first_page;
+
+            }
+
+        }
 
 
 return 0;

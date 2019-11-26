@@ -7,16 +7,6 @@ public:
   string f_name,l_name,age,city,state,contact;
 };
 
-// class Employer : public user
-// {
-//
-// };
-//
-// class Freelancer : public user
-// {
-//
-// };
-
 class Job1
 {
 public:
@@ -26,7 +16,7 @@ public:
 class Bid1
 {
 public:
-    string jobID, email, amount, description, comment, isAccepted, isCompleted;
+    string jobID, email, amount, description, comment, isAccepted, isCompleted,BidNo;
 };
 
 class Mail

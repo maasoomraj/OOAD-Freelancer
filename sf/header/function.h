@@ -26,14 +26,43 @@ void header(string name)
     cout<<" ";
   }
   cout<<"|"<<endl;
-  cout<<"|  "<<bold_on<<"q : "<<bold_off<<"Quit  |  "<<bold_on<<"0 : "<<bold_off<<"Logout  |  "<<bold_on<<"b : "<<bold_off<<"Back                               |"<<endl;
+  cout<<"|  "<<bold_on<<"-1 : "<<bold_off<<"Quit  |  "<<bold_on<<"0 : "<<bold_off<<"Logout  |                                        |"<<endl;
+  // cout<<"|  q : Quit  |  l : Logout  |  b : Back                                |"<<endl;
+  cout<<"-----------------------------------------------------------------------";
+}
+
+void page_header(string name)
+{
+  cout<<"-----------------------------------------------------------------------"<<endl;
+  cout<<"|  Signed in as : "<<bold_on<<name<<bold_off;
+  for(int i=0;i<52-name.size();i++)
+  {
+    cout<<" ";
+  }
+  cout<<"|"<<endl;
+  // cout<<"|  "<<bold_on<<"-1 : "<<bold_off<<"Quit  |  "<<bold_on<<"0 : "<<bold_off<<"Logout  |                                        |"<<endl;
+  // cout<<"|  q : Quit  |  l : Logout  |  b : Back                                |"<<endl;
+  cout<<"-----------------------------------------------------------------------";
+}
+
+
+void main_header()
+{
+  cout<<"-----------------------------------------------------------------------"<<endl;
+  cout<<"|  Freelancing Portal "<<bold_on<<bold_off;
+  for(int i=0;i<48;i++)
+  {
+    cout<<" ";
+  }
+  cout<<"|"<<endl;
+  // cout<<"|  "<<bold_on<<"-1 : "<<bold_off<<"Quit  |  "<<bold_on<<"0 : "<<bold_off<<"Logout  |                                        |"<<endl;
   // cout<<"|  q : Quit  |  l : Logout  |  b : Back                                |"<<endl;
   cout<<"-----------------------------------------------------------------------";
 }
 
 void choice()
 {
-  cout<<"   "<<bold_on<<"Enter your choice  :  "<<bold_off;
+  cout<<"\n   "<<bold_on<<"Enter your choice  :  "<<bold_off;
 }
 
 void space()

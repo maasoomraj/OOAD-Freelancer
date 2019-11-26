@@ -73,6 +73,33 @@ class Job
       isApproved = "0";
       JobId = "0";
     }
+
+    string show_job()
+    {
+      return JobId;
+    }
+
+    string show_title()
+    {
+      return title;
+    }
+
+    string show_description()
+    {
+      return description;
+    }
+
+    string show_price()
+    {
+      return price;
+    }
+
+    string show_deadline()
+    {
+      return deadline;
+    }
+
+
 };
 
 class JobNo

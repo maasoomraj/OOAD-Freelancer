@@ -3,7 +3,7 @@ using namespace std;
 class Bid
 {
     private:
-    string jobID, email, amount, description, comment, isAccepted, isCompleted;
+    string jobID, email, amount, description, comment, isAccepted, isCompleted,BidNo;
 
     public:
     Bid(){
@@ -44,4 +44,40 @@ class Bid
     {
         jobID=s.substr(0,s.length());
     }
+
+    void get_BidNo(string s)
+    {
+        BidNo=s.substr(0,s.length());
+    }
+
+    string show_BidNo()
+    {
+      return BidNo;
+    }
+
+    string show_email()
+    {
+      return email;
+    }
+
+    string show_job()
+    {
+      return jobID;
+    }
+
+    string show_amount()
+    {
+      return amount;
+    }
+
+    string show_description()
+    {
+      return description;
+    }
+};
+
+class BidNo
+{
+public:
+  int BidNo;
 };
